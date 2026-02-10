@@ -10,23 +10,29 @@
 <body>
     <p id="valasz"></p>
     <p id="feldolgozva"></p>
+    <p id="magyar"></p>
     <script>
-        let str = ""
         async function nevnapok() {
             const response = await
-                fetch("https://nameday.abalin.net/api/V2/today");
+            fetch("https://nameday.abalin.net/api/V2/today");
             const nevek = await response.json();
             document.getElementById("valasz").innerHTML = JSON.stringify(nevek.data);
+            // document.getElementById("valasz").innerHTML = nevek.data.hu;
+            console.log(nevek.data);
             return nevek.data
         }
         
         async function kereso() {
-            let data = await nevnapok()
-
-            for (const element of data) {
-                str +=  element + "\n"
+            const data = await nevnapok();
+            
+            let str = ""
+            // data = { at: "...", bg: "...", ... }
+            for (const [countryCode, names] of Object.entries(data)) {
+                str += `${countryCode}: ${names}<br>`;
             }
-            document.getElementById("valasz").innerHTML = str;
+
+            document.getElementById("feldolgozva").innerHTML = str;
+            document.getElementById("magyar").innerHTML = data.hu;
         }
 
 
