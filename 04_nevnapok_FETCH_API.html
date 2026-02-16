@@ -12,20 +12,35 @@
     <p id="valasz"></p>
     <p id="feldolgozva"></p>
     <p id="magyar"></p>
+    
+    <hr>
+    
+    <h3>Névnapok keresése dátum szerint</h3>
+    <form id="datumForm">
+        <label for="nap">Nap:</label>
+        <input type="number" id="nap" name="nap" min="1" max="31" value="1" required>
+        
+        <label for="honap">Hónap:</label>
+        <input type="number" id="honap" name="honap" min="1" max="12" value="1" required>
+        
+        <button type="submit">Keresés</button>
+    </form>
+    
+    <div id="postEredmeny"></div>
     <script>
         async function nevnapok() {
             const response = await
-            fetch("https://nameday.abalin.net/api/V2/today");
+                fetch("https://nameday.abalin.net/api/V2/today");
             const nevek = await response.json();
-            document.getElementById("valasz").innerHTML = JSON.stringify(nevek.data);
+            // document.getElementById("valasz").innerHTML = JSON.stringify(nevek.data);
             // document.getElementById("valasz").innerHTML = nevek.data.hu;
             // console.log(nevek.data);
             return nevek.data
         }
-        
+
         async function kereso() {
             const data = await nevnapok();
-            
+
             let str = ""
             // data = { at: "...", bg: "...", ... }
             for (const [countryCode, names] of Object.entries(data)) {
@@ -39,13 +54,13 @@
         document.getElementById("nevnapGomb").addEventListener("click", kereso);
 
 
-                // POST kérés példa
-                async function nevnapokPost() {
+        // POST kérés dátum alapján
+        async function nevnapokPost(day, month) {
             const data = {
-                "day": 1,
-                "month": 1
+                "day": day,
+                "month": month
             };
-            
+
             const response = await fetch("https://nameday.abalin.net/api/V2/date", {
                 method: "POST",
                 headers: {
@@ -54,12 +69,35 @@
                 },
                 body: JSON.stringify(data)
             });
-            
+
             const nevek = await response.json();
             console.log("POST válasz:", nevek);
+            
+            // Eredmény megjelenítése
+            // let eredmenyStr = "";
+            if (nevek.data) {
+                // for (const [countryCode, names] of Object.entries(nevek.data)) {
+                //     eredmenyStr += `<strong>${countryCode.toUpperCase()}:</strong> ${names}<br>`;
+                // }
+                // document.getElementById("postEredmeny").innerHTML = 
+                //     `<h4>Névnapok ${day}. ${month}. dátumra:</h4>${eredmenyStr}`;                
+                document.getElementById("postEredmeny").innerHTML = 
+                    `<h4>Névnapok ${day}. ${month}. dátumra:</h4>${nevek.data.hu}`;
+            } else {
+                document.getElementById("postEredmeny").innerHTML = 
+                    `<p>Hiba történt a lekérés során.</p>`;
+            }
         }
-        
-        nevnapokPost(); // Kikommentezve, ha szeretnéd használni, vedd ki a kommentet
+
+        // Form submit eseménykezelő
+        document.getElementById("datumForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Megakadályozza az alapértelmezett form küldést
+            
+            const nap = parseInt(document.getElementById("nap").value);
+            const honap = parseInt(document.getElementById("honap").value);
+            
+            nevnapokPost(nap, honap);
+        });
 
     </script>
 
