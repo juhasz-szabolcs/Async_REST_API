@@ -8,6 +8,7 @@
 </head>
 
 <body>
+    <button id="nevnapGomb">Névnapok lekérése</button>
     <p id="valasz"></p>
     <p id="feldolgozva"></p>
     <p id="magyar"></p>
@@ -18,7 +19,7 @@
             const nevek = await response.json();
             document.getElementById("valasz").innerHTML = JSON.stringify(nevek.data);
             // document.getElementById("valasz").innerHTML = nevek.data.hu;
-            console.log(nevek.data);
+            // console.log(nevek.data);
             return nevek.data
         }
         
@@ -31,12 +32,12 @@
                 str += `${countryCode}: ${names}<br>`;
             }
 
-            document.getElementById("feldolgozva").innerHTML = str;
+            // document.getElementById("feldolgozva").innerHTML = str;
             document.getElementById("magyar").innerHTML = data.hu;
         }
 
-
-        kereso()
+        // Gomb eseménykezelő
+        document.getElementById("nevnapGomb").addEventListener("click", kereso);
 
     </script>
 
